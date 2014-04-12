@@ -1,7 +1,7 @@
 linux-check-mem-nagios-plugin
 =============================
 
-Nagios plugin that measures Linux memory use as reported by the 'free' command, includes PNP4Nagios graph template.
+Nagios plugin that measures Linux memory use as reported by the 'free' command. Includes PNP4Nagios graph template.
 
 This is plugin is based on one published on the Nagios Exchange by Lukasz Gogolin (lukasz.gogolin@gmail.com)
 This is a copy and fork of version 1.1 released 2012-07-22
@@ -46,5 +46,6 @@ Sample install steps below are for CentOS 6.5 and assume you are using nagio wit
 	}
 
 The pnp4nagios template name assumes you have pnp4nagios configured with "CUSTOM_TEMPLATE = 1", if not you may need to change this filename so that it matches.
+
 http://docs.pnp4nagios.org/pnp-0.6/tpl_custom?s[]=custom
 
