@@ -12,7 +12,7 @@ cp check_mem /usr/lib64/nagios/plugins/
 #   service nrpe reload
 # then test manually
 #   /usr/lib64/nagios/plugins/check_nrpe -H target.host.name -c check_mem
-# now go configue in Nagios, e.g.
+# now go configure the service in Nagios, and associate with your hosts/hostgroups
 #
 # define service {
 #         name                            check-nrpe-linux-mem
