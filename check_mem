@@ -17,7 +17,10 @@ if [ "$1" = "-w" ] && [ "$2" -gt "0" ] && [ "$3" = "-c" ] && [ "$4" -gt "0" ]; t
 	crit=$(((($memTotal_m*100)-($memTotal_m*(100-$4)))/100))
 
 	memTotal_b=$(($memTotal_m*1024*1024))
+	memFree_b=$(($memFree_m*1024*1024))
 	memUsed_b=$(($memUsed_m*1024*1024))
+	memBuffer_b=$(($memBuffer_m*1024*1024))
+	memCache_b=$(($memCache_m*1024*1024))
 
 	minmax="0;$memTotal_b";
 	data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn;$crit;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
