@@ -13,14 +13,14 @@ if [ "$1" = "-w" ] && [ "$2" -gt "0" ] && [ "$3" = "-c" ] && [ "$4" -gt "0" ]; t
         memUsed_m=$(($memTotal_m-$memFree_m-$memBuffer_m-$memCache_m))
         memUsedPrc=$((($memUsed_m*100)/$memTotal_m))
 
-	warn=$(((($memTotal_m*100)-($memTotal_m*(100-$2)))/100))
-	crit=$(((($memTotal_m*100)-($memTotal_m*(100-$4)))/100))
-
 	memTotal_b=$(($memTotal_m*1024*1024))
 	memFree_b=$(($memFree_m*1024*1024))
 	memUsed_b=$(($memUsed_m*1024*1024))
 	memBuffer_b=$(($memBuffer_m*1024*1024))
 	memCache_b=$(($memCache_m*1024*1024))
+
+        warn=$(((($memTotal_b*100)-($memTotal_b*(100-$2)))/100))
+        crit=$(((($memTotal_b*100)-($memTotal_b*(100-$4)))/100))
 
 	minmax="0;$memTotal_b";
 	data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn;$crit;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
