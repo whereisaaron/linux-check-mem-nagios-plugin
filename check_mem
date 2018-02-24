@@ -52,6 +52,9 @@ crit=$(( ( ($memTotal_m * 100) - ($memTotal_m * (100-$CRITICAL)) ) /100 ))
 
 memTotal_b=$(( $memTotal_m * 1024 * 1024 ))
 memUsed_b=$(( $memUsed_m * 1024 * 1024 ))
+memFree_b=$(( $memFree_m * 1024 * 1024 ))
+memBuffer_b=$(( $memBuffer_m * 1024 * 1024 ))
+memCache_b=$(( $memCache_m * 1024 * 1024 ))
 
 minmax="0;$memTotal_b";
 
