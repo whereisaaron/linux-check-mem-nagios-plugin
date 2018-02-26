@@ -36,16 +36,13 @@ done
 
 if [ $CRITICAL -gt 0 -a $CRITICAL -lt 100 -a $WARNING -gt 0 -a $WARNING -lt 100 ]; then
 
-    freem=`free -m | grep Mem`
-    freem_bits=(${freem// / })
+    memTotal_m=$(awk '$1~/^MemTotal/{print $2}' /proc/meminfo )
+    memFree_m=$(awk '$1~/^MemFree/{print $2}' /proc/meminfo )
+    memBuffer_m=$(awk '$1~/^Buffers/{print $2}' /proc/meminfo )
+    memCache_m=$(awk '$1~/^Cached/{print $2}' /proc/meminfo )
 
-    memTotal_m=${freem_bits[1]}
-    memFree_m=${freem_bits[3]}
-    memBuffer_m=${freem_bits[5]}
-    memCache_m=${freem_bits[6]}
-
-    memUsed_m=$(($memTotal_m-$memFree_m-$memBuffer_m-$memCache_m))
-    memUsedPrc=$((($memUsed_m*100)/$memTotal_m))
+    memUsed_m=$(( $memTotal_m - $memFree_m - $memBuffer_m - $memCache_m ))
+    memUsedPrc=$(( ($memUsed_m * 100) / $memTotal_m ))
 
     warn=$(((($memTotal_m*100)-($memTotal_m*(100-${WARNING})))/100))
     crit=$(((($memTotal_m*100)-($memTotal_m*(100-${CRITICAL})))/100))
