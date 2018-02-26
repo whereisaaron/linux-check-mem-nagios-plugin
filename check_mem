@@ -1,6 +1,40 @@
 #!/bin/bash
 
-if [ "$1" = "-w" ] && [ "$2" -gt "0" ] && [ "$3" = "-c" ] && [ "$4" -gt "0" ]; then
+
+# Default percentage usage limits.
+CRITICAL=90
+WARNING=80
+
+usage() {
+    echo "check_mem v1.4"
+    echo ""
+    echo "Usage:"
+    echo "check_mem.sh -w <warnlevel> -c <critlevel>"
+    echo ""
+    echo "warnlevel and critlevel is percentage value without %"
+    echo ""
+    echo "v1.1 Copyright (C) 2012 Lukasz Gogolin (lukasz.gogolin@gmail.com)"
+    echo "v1.2 Modified 2014 by Aaron Roydhouse (aaron@roydhouse.com)"
+    echo "v1.3 Modified 2015 by Aaron Roydhouse (aaron@roydhouse.com)"
+    exit 1
+}
+
+while getopts "w:c:" o; do
+    case "${o}" in
+        c)
+            CRITICAL=$(( ${OPTARG} + 0 ))
+            ;;
+        w)
+            WARNING=$(( ${OPTARG} + 0))
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+
+if [ $CRITICAL -gt 0 -a $CRITICAL -lt 100 -a $WARNING -gt 0 -a $WARNING -lt 100 ]; then
 
     freem=`free -m | grep Mem`
     freem_bits=(${freem// / })
@@ -13,8 +47,8 @@ if [ "$1" = "-w" ] && [ "$2" -gt "0" ] && [ "$3" = "-c" ] && [ "$4" -gt "0" ]; t
     memUsed_m=$(($memTotal_m-$memFree_m-$memBuffer_m-$memCache_m))
     memUsedPrc=$((($memUsed_m*100)/$memTotal_m))
 
-    warn=$(((($memTotal_m*100)-($memTotal_m*(100-$2)))/100))
-    crit=$(((($memTotal_m*100)-($memTotal_m*(100-$4)))/100))
+    warn=$(((($memTotal_m*100)-($memTotal_m*(100-${WARNING})))/100))
+    crit=$(((($memTotal_m*100)-($memTotal_m*(100-${CRITICAL})))/100))
 
     memTotal_b=$(($memTotal_m*1024*1024))
     memFree_b=$(($memFree_m*1024*1024))
@@ -25,27 +59,16 @@ if [ "$1" = "-w" ] && [ "$2" -gt "0" ] && [ "$3" = "-c" ] && [ "$4" -gt "0" ]; t
     minmax="0;$memTotal_b";
     data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn;$crit;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
 
-    if [ "$memUsedPrc" -ge "$4" ]; then
+    if [ "$memUsedPrc" -ge "${CRITICAL}" ]; then
         echo "MEMORY CRITICAL - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
-        $(exit 2)
-    elif [ "$memUsedPrc" -ge "$2" ]; then
+        exit 2
+    elif [ "$memUsedPrc" -ge "${WARNING}" ]; then
         echo "MEMORY WARNING - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
-       $(exit 1)
+        exit 1
     else
         echo "MEMORY OK - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used|$data"
-       $(exit 0)
+        exit 0
     fi
-
 else
-    echo "check_mem v1.3"
-    echo ""
-    echo "Usage:"
-    echo "check_mem.sh -w <warnlevel> -c <critlevel>"
-    echo ""
-    echo "warnlevel and critlevel is percentage value without %"
-    echo ""
-    echo "v1.1 Copyright (C) 2012 Lukasz Gogolin (lukasz.gogolin@gmail.com)"
-    echo "v1.2 Modified 2014 by Aaron Roydhouse (aaron@roydhouse.com)"
-    echo "v1.3 Modified 2015 by Aaron Roydhouse (aaron@roydhouse.com)"
-    exit
+    usage
 fi
