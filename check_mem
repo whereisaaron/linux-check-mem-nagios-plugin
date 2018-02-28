@@ -34,41 +34,41 @@ while getopts "w:c:" o; do
 done
 
 
-if [ $CRITICAL -gt 0 -a $CRITICAL -lt 100 -a $WARNING -gt 0 -a $WARNING -lt 100 ]; then
-
-    freem=`free -m | grep Mem`
-    freem_bits=(${freem// / })
-
-    memTotal_m=${freem_bits[1]}
-    memFree_m=${freem_bits[3]}
-    memBuffer_m=${freem_bits[5]}
-    memCache_m=${freem_bits[6]}
-
-    memUsed_m=$(($memTotal_m-$memFree_m-$memBuffer_m-$memCache_m))
-    memUsedPrc=$((($memUsed_m*100)/$memTotal_m))
-
-    warn=$(((($memTotal_m*100)-($memTotal_m*(100-${WARNING})))/100))
-    crit=$(((($memTotal_m*100)-($memTotal_m*(100-${CRITICAL})))/100))
-
-    memTotal_b=$(($memTotal_m*1024*1024))
-    memFree_b=$(($memFree_m*1024*1024))
-    memUsed_b=$(($memUsed_m*1024*1024))
-    memBuffer_b=$(($memBuffer_m*1024*1024))
-    memCache_b=$(($memCache_m*1024*1024))
-
-    minmax="0;$memTotal_b";
-    data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn;$crit;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
-
-    if [ "$memUsedPrc" -ge "${CRITICAL}" ]; then
-        echo "MEMORY CRITICAL - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
-        exit 2
-    elif [ "$memUsedPrc" -ge "${WARNING}" ]; then
-        echo "MEMORY WARNING - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
-        exit 1
-    else
-        echo "MEMORY OK - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used|$data"
-        exit 0
-    fi
-else
+if [ $CRITICAL -lt 0 -o $CRITICAL -gt 100 -o $WARNING -lt 0 -o $WARNING -gt 100 -o $WARNING -gt $CRITICAL ]; then
     usage
+fi
+
+
+freem=`free -m | grep Mem`
+freem_bits=(${freem// / })
+
+memTotal_m=${freem_bits[1]}
+memFree_m=${freem_bits[3]}
+memBuffer_m=${freem_bits[5]}
+memCache_m=${freem_bits[6]}
+
+memUsed_m=$(($memTotal_m-$memFree_m-$memBuffer_m-$memCache_m))
+memUsedPrc=$((($memUsed_m*100)/$memTotal_m))
+
+warn=$(((($memTotal_m*100)-($memTotal_m*(100-${WARNING})))/100))
+crit=$(((($memTotal_m*100)-($memTotal_m*(100-${CRITICAL})))/100))
+
+memTotal_b=$(($memTotal_m*1024*1024))
+memFree_b=$(($memFree_m*1024*1024))
+memUsed_b=$(($memUsed_m*1024*1024))
+memBuffer_b=$(($memBuffer_m*1024*1024))
+memCache_b=$(($memCache_m*1024*1024))
+
+minmax="0;$memTotal_b";
+data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn;$crit;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
+
+if [ "$memUsedPrc" -ge "${CRITICAL}" ]; then
+    echo "MEMORY CRITICAL - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
+    exit 2
+elif [ "$memUsedPrc" -ge "${WARNING}" ]; then
+    echo "MEMORY WARNING - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
+    exit 1
+else
+    echo "MEMORY OK - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used|$data"
+    exit 0
 fi
