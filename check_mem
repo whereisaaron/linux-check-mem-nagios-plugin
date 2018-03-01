@@ -1,23 +1,25 @@
 #!/bin/bash
 
+# check_mem v1.4
+#
+# v1.1 Copyright (C) 2012 Lukasz Gogolin (lukasz.gogolin@gmail.com)
+# v1.2 2014 Modified by Aaron Roydhouse (aaron@roydhouse.com)
+# v1.3 2015 Modified by Aaron Roydhouse (aaron@roydhouse.com)
+# v1.4 2018 Modified by @DavidGoodwin, @eacmen, @whereisaaron
 
-# Default percentage usage limits.
+# Default percentage usage limits
 CRITICAL=90
 WARNING=80
 
 usage() {
     echo "check_mem v1.4"
     echo ""
-    echo "Usage:"
-    echo "check_mem.sh -w <warnlevel> -c <critlevel>"
+    echo "Usage: check_mem -w <warnlevel> -c <critlevel>"
     echo ""
-    echo "warnlevel and critlevel is percentage value without %"
+    echo "  'warnlevel' and 'critlevel' are percentage values without a percent sign ('%')"
+    echo "  e.g. check_mem -w 80 -c 90"
     echo ""
-    echo "v1.1 Copyright (C) 2012 Lukasz Gogolin (lukasz.gogolin@gmail.com)"
-    echo "v1.2 Modified 2014 by Aaron Roydhouse (aaron@roydhouse.com)"
-    echo "v1.3 Modified 2015 by Aaron Roydhouse (aaron@roydhouse.com)"
-    exit 1
-}
+ }
 
 while getopts "w:c:" o; do
     case "${o}" in
@@ -29,6 +31,7 @@ while getopts "w:c:" o; do
             ;;
         *)
             usage
+            exit 1
             ;;
     esac
 done
@@ -36,6 +39,7 @@ done
 
 if [ $CRITICAL -lt 0 -o $CRITICAL -gt 100 -o $WARNING -lt 0 -o $WARNING -gt 100 -o $WARNING -gt $CRITICAL ]; then
     usage
+    exit 1
 fi
 
 
