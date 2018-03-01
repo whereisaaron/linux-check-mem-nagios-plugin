@@ -1,8 +1,9 @@
-linux-check-mem-nagios-plugin
-=============================
+check_mem
+=========
 
 Nagios plugin that measures Linux memory use as reported by the '/proc/meminfo' output.
-A PNP4Nagios graph template is include to combine the figures on a single chart.
+
+A [PNP4Nagios](https://github.com/lingej/pnp4nagios) graph template is include to combine the figures on a single chart.
 
 ![Sample Chart](check_mem_example.png)
 
