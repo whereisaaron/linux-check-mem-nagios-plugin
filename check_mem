@@ -39,25 +39,28 @@ if [ $CRITICAL -lt 0 -o $CRITICAL -gt 100 -o $WARNING -lt 0 -o $WARNING -gt 100 
 fi
 
 
-memTotal_m=$(awk '$1~/^MemTotal/{print $2}' /proc/meminfo )
-memFree_m=$(awk '$1~/^MemFree/{print $2}' /proc/meminfo )
-memBuffer_m=$(awk '$1~/^Buffers/{print $2}' /proc/meminfo )
-memCache_m=$(awk '$1~/^Cached/{print $2}' /proc/meminfo )
+memTotal_k=$(awk '$1~/^MemTotal/{print $2}' /proc/meminfo )
+memFree_k=$(awk '$1~/^MemFree/{print $2}' /proc/meminfo )
+memBuffer_k=$(awk '$1~/^Buffers/{print $2}' /proc/meminfo )
+memCache_k=$(awk '$1~/^Cached/{print $2}' /proc/meminfo )
 
-memUsed_m=$(( $memTotal_m - $memFree_m - $memBuffer_m - $memCache_m ))
-memUsedPrc=$(( ($memUsed_m * 100) / $memTotal_m ))
+memUsed_k=$(( $memTotal_k - $memFree_k - $memBuffer_k - $memCache_k ))
+memUsedPrc=$(( ($memUsed_k * 100) / $memTotal_k ))
 
-warn=$(((($memTotal_m*100)-($memTotal_m*(100-${WARNING})))/100))
-crit=$(((($memTotal_m*100)-($memTotal_m*(100-${CRITICAL})))/100))
+warn_b=$(( ((($memTotal_k*100)-($memTotal_k*(100-${WARNING})))/100)*1024 ))
+crit_b=$(( ((($memTotal_k*100)-($memTotal_k*(100-${CRITICAL})))/100)*1024 ))
 
-memTotal_b=$(($memTotal_m*1024*1024))
-memFree_b=$(($memFree_m*1024*1024))
-memUsed_b=$(($memUsed_m*1024*1024))
-memBuffer_b=$(($memBuffer_m*1024*1024))
-memCache_b=$(($memCache_m*1024*1024))
+memTotal_b=$(($memTotal_k*1024))
+memFree_b=$(($memFree_k*1024))
+memUsed_b=$(($memUsed_k*1024))
+memBuffer_b=$(($memBuffer_k*1024))
+memCache_b=$(($memCache_k*1024))
+
+memTotal_m=$(($memTotal_k/1024))
+memUsed_m=$(($memUsed_k/1024))
 
 minmax="0;$memTotal_b";
-data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn;$crit;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
+data="TOTAL=$memTotal_b;;;$minmax USED=$memUsed_b;$warn_b;$crit_b;$minmax CACHE=$memCache_b;;;$minmax BUFFER=$memBuffer_b;;;$minmax"
 
 if [ "$memUsedPrc" -ge "${CRITICAL}" ]; then
     echo "MEMORY CRITICAL - Total: $memTotal_m MB - Used: $memUsed_m MB - $memUsedPrc% used!|$data"
